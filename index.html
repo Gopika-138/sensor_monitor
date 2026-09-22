@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sensor Monitoring</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f2f6f9;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 25px 0;
+            color: #222;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .box {
+            width: 250px;
+            padding: 25px;
+            border-radius: 20px;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+
+        .temperature {
+            border-top: 8px solid #ff5722;
+        }
+
+        .humidity {
+            border-top: 8px solid #2196f3;
+        }
+
+        .icon {
+            font-size: 45px;
+        }
+
+        .label {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .value {
+            font-size: 38px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .status {
+            margin-top: 30px;
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>🌱 Sensor Monitoring</h1>
+
+    <div class="container">
+
+        <!-- Temperature -->
+        <div class="box temperature">
+            <div class="icon">🌡️</div>
+            <div class="label">Temperature</div>
+            <div class="value">
+                <span id="temperature">--</span> °C
+            </div>
+        </div>
+
+        <!-- Humidity -->
+        <div class="box humidity">
+            <div class="icon">💧</div>
+            <div class="label">Humidity</div>
+            <div class="value">
+                <span id="humidity">--</span> %
+            </div>
+        </div>
+
+    </div>
+
+    <div class="status" id="status">
+        Connecting to Firebase...
+    </div>
+
+
+    <!-- Firebase -->
+    <script type="module">
+
+        import { initializeApp } from
+        "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+        import {
+            getDatabase,
+            ref,
+            onValue
+        } from
+        "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+
+        // ==============================
+        // YOUR FIREBASE CONFIG
+        // ==============================
+        const firebaseConfig = {
+  apiKey: "AIzaSyD5moARaZDRzAkeFqASSTicmeedb0xv2xE",
+  authDomain: "smart-cattle-d3ad7.firebaseapp.com",
+  databaseURL: "https://smart-cattle-d3ad7-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "smart-cattle-d3ad7",
+  storageBucket: "smart-cattle-d3ad7.firebasestorage.app",
+  messagingSenderId: "162351279765",
+  appId: "1:162351279765:web:ab21150756f05bea5cb59c"
+};
+
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+
+        const database = getDatabase(app);
+
+
+        // Firebase path
+        const sensorRef = ref(database, "SensorData");
+
+
+        // Read realtime data
+        onValue(sensorRef, (snapshot) => {
+
+            const data = snapshot.val();
+
+            if (data) {
+
+                // Temperature
+                document.getElementById("temperature").textContent =
+                    data.Temperature ?? "--";
+
+                // Humidity
+                document.getElementById("humidity").textContent =
+                    data.Humidity ?? "--";
+
+                document.getElementById("status").textContent =
+                    "● Firebase Connected";
+
+            } else {
+
+                document.getElementById("temperature").textContent = "--";
+                document.getElementById("humidity").textContent = "--";
+
+                document.getElementById("status").textContent =
+                    "No sensor data available";
+            }
+
+        });
+
+
+    </script>
+
+</body>
+</html>
+
